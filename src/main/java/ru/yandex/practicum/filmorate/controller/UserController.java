@@ -33,10 +33,6 @@ public class UserController {
             log.warn("Указанный email уже занят");
             throw new ValidationException("Этот email уже используется");
         }
-        if (user.getLogin().contains(" ")) {
-            log.warn("Указан некорректный логин");
-            throw new ValidationException("Указан некорректный логин");
-        }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано", user.getLogin(),
