@@ -27,10 +27,10 @@ public class UserController {
 
     @PostMapping
     public User create(@RequestBody User user) {
-//        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-//            log.warn("Указан некорректный email");
-//            throw new ValidationException("Указан некорректный email");
-//        }
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            log.warn("Указан некорректный email");
+            throw new ValidationException("Указан некорректный email");
+        }
         if (users.values()
                 .stream()
                 .map(User::getEmail)
@@ -38,7 +38,7 @@ public class UserController {
             log.warn("Указанный email уже занят");
             throw new ValidationException("Этот email уже используется");
         }
-        if (/*user.getLogin().isBlank() ||*/ user.getLogin().contains(" ")) {
+        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.warn("Указан некорректный логин");
             throw new ValidationException("Указан некорректный логин");
         }
@@ -74,27 +74,24 @@ public class UserController {
                 log.warn("Указанный email уже занят");
                 throw new ValidationException("Этот email уже используется");
             }
-//            if (!user.getEmail().isBlank() && user.getEmail().contains("@")) {
-//                oldUser.setEmail(user.getEmail());
-//                log.trace("Email пользователя {} изменен", user.getLogin());
-//            }
-            oldUser.setEmail(user.getEmail());
-            oldUser.setLogin(user.getLogin());
-            oldUser.setName(user.getName());
-//            if (user.getName() != null) {
-//                oldUser.setName(user.getName());
-//                log.trace("Имя пользователя {} ({}) изменено", oldUser.getLogin(), user.getEmail());
-//            }
-//            if (!user.getLogin().isBlank() && !user.getLogin().contains(" ")) {
-//                log.trace("Логин пользователя {} ({}) изменен на {}", oldUser.getLogin(), user.getEmail(),
-//                        user.getLogin());
-//                oldUser.setLogin(user.getLogin());
-//                if (user.getName() == null) {
-//                    oldUser.setName(user.getLogin());
-//                    log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
-//                            user.getLogin(), user.getEmail());
-//                }
-//            }
+            if (user.getEmail() != null && !user.getEmail().isBlank() && user.getEmail().contains("@")) {
+                oldUser.setEmail(user.getEmail());
+                log.trace("Email пользователя {} изменен", user.getLogin());
+            }
+            if (user.getName() != null) {
+                oldUser.setName(user.getName());
+                log.trace("Имя пользователя {} ({}) изменено", oldUser.getLogin(), user.getEmail());
+            }
+            if (user.getLogin() != null && !user.getLogin().isBlank() && !user.getLogin().contains(" ")) {
+                log.trace("Логин пользователя {} ({}) изменен на {}", oldUser.getLogin(), user.getEmail(),
+                        user.getLogin());
+                oldUser.setLogin(user.getLogin());
+                if (user.getName() == null) {
+                    oldUser.setName(user.getLogin());
+                    log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
+                            user.getLogin(), user.getEmail());
+                }
+            }
             if (user.getBirthday() != null && user.getBirthday().isBefore(LocalDate.now())) {
                 oldUser.setBirthday(user.getBirthday());
                 log.trace("Дата рождения пользователя {} ({}) изменена", oldUser.getLogin(), user.getEmail());

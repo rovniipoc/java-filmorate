@@ -28,10 +28,10 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film film) {
-//        if (film.getName().isBlank()) {
-//            log.warn("Указано пустое название");
-//            throw new ValidationException("Название не может быть пустым");
-//        }
+        if (film.getName() == null || film.getName().isBlank()) {
+            log.warn("Указано пустое название");
+            throw new ValidationException("Название не может быть пустым");
+        }
         if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.warn("Указано слишком длинное описание");
             throw new ValidationException("Максимальная длина описания - " + MAX_DESCRIPTION_LENGTH + " символов");
@@ -59,11 +59,10 @@ public class FilmController {
         }
         if (films.containsKey(film.getId())) {
             Film oldFilm = films.get(film.getId());
-//            if (!film.getName().isBlank()) {
-//                log.trace("Название фильма \"{}\" изменено на \"{}\"", oldFilm.getName(), film.getName());
-//                oldFilm.setName(film.getName());
-//            }
-            oldFilm.setName(film.getName());
+            if (film.getName() != null && !film.getName().isBlank()) {
+                log.trace("Название фильма \"{}\" изменено на \"{}\"", oldFilm.getName(), film.getName());
+                oldFilm.setName(film.getName());
+            }
             if (film.getDescription() != null && film.getDescription().length() <= MAX_DESCRIPTION_LENGTH) {
                 oldFilm.setDescription(film.getDescription());
                 log.trace("Описание фильма \"{}\" изменено", oldFilm.getName());
