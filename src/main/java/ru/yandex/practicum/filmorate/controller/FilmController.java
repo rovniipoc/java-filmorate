@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -27,11 +28,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
-        if (film.getName() == null || film.getName().isBlank()) {
-            log.warn("Указано пустое название");
-            throw new ValidationException("Название не может быть пустым");
-        }
+    public Film create(@Valid @RequestBody Film film) {
         if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.warn("Указано слишком длинное описание");
             throw new ValidationException("Максимальная длина описания - " + MAX_DESCRIPTION_LENGTH + " символов");
@@ -52,26 +49,23 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         if (film.getId() == null) {
             log.warn("В запросе отсутствует id");
             throw new ValidationException("Id должен быть указан");
         }
         if (films.containsKey(film.getId())) {
             Film oldFilm = films.get(film.getId());
-            if (film.getName() != null && !film.getName().isBlank()) {
-                log.trace("Название фильма \"{}\" изменено на \"{}\"", oldFilm.getName(), film.getName());
-                oldFilm.setName(film.getName());
-            }
-            if (film.getDescription() != null && film.getDescription().length() <= MAX_DESCRIPTION_LENGTH) {
+            oldFilm.setName(film.getName());
+            if (film.getDescription().length() <= MAX_DESCRIPTION_LENGTH) {
                 oldFilm.setDescription(film.getDescription());
                 log.trace("Описание фильма \"{}\" изменено", oldFilm.getName());
             }
-            if (film.getReleaseDate() != null && film.getReleaseDate().isAfter(VALID_RELEASE_DATE)) {
+            if (film.getReleaseDate().isAfter(VALID_RELEASE_DATE)) {
                 oldFilm.setReleaseDate(film.getReleaseDate());
                 log.trace("Дата релиза фильма \"{}\" изменена", oldFilm.getName());
             }
-            if (film.getDuration() != null && film.getDuration() >= 0) {
+            if (film.getDuration() >= 0) {
                 oldFilm.setDuration(film.getDuration());
                 log.trace("Продолжительность фильма \"{}\" изменена", oldFilm.getName());
             }
