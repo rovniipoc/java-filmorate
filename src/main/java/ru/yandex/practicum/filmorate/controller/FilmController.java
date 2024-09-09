@@ -29,10 +29,6 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
-            log.warn("Указано слишком длинное описание");
-            throw new ValidationException("Максимальная длина описания - " + MAX_DESCRIPTION_LENGTH + " символов");
-        }
         if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
             log.warn("Указана слишком старая дата релиза");
             throw new ValidationException("Дата релиза не может быть раньше " + VALID_RELEASE_DATE);
@@ -57,10 +53,6 @@ public class FilmController {
         if (films.containsKey(film.getId())) {
             Film oldFilm = films.get(film.getId());
             oldFilm.setName(film.getName());
-            if (film.getDescription().length() <= MAX_DESCRIPTION_LENGTH) {
-                oldFilm.setDescription(film.getDescription());
-                log.trace("Описание фильма \"{}\" изменено", oldFilm.getName());
-            }
             if (film.getReleaseDate().isAfter(VALID_RELEASE_DATE)) {
                 oldFilm.setReleaseDate(film.getReleaseDate());
                 log.trace("Дата релиза фильма \"{}\" изменена", oldFilm.getName());
