@@ -30,13 +30,13 @@ public class UserController {
                 .stream()
                 .map(User::getEmail)
                 .anyMatch(email -> email.equals(user.getEmail()))) {
-            log.warn("Указанный email уже занят");
+            log.warn("При создании указан занятый email");
             throw new ValidationException("Этот email уже используется");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано", user.getLogin(),
-                    user.getEmail());
+            log.trace("При создании имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано"
+                    , user.getLogin(), user.getEmail());
         }
         user.setId(getNextId());
         log.trace("Пользователю {} ({}) присвоен id = {}", user.getLogin(), user.getEmail(), user.getId());
@@ -57,7 +57,7 @@ public class UserController {
                     .stream()
                     .map(User::getEmail)
                     .anyMatch(email -> email.equals(user.getEmail()))) {
-                log.warn("Указанный email уже занят");
+                log.warn("При обновлении указан занятый email");
                 throw new ValidationException("Этот email уже используется");
             }
             oldUser.setEmail(user.getEmail());
@@ -68,7 +68,7 @@ public class UserController {
                 log.trace("Имя пользователя {} ({}) изменено", oldUser.getLogin(), user.getEmail());
             } else {
                 oldUser.setName(user.getLogin());
-                log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
+                log.trace("При обновлении имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
                         user.getLogin(), user.getEmail());
             }
             log.debug("Информация о пользователе {} ({}) изменена", oldUser.getLogin(), user.getEmail());
