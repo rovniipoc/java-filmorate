@@ -7,16 +7,16 @@ import java.time.LocalDate;
 
 @Data
 public class User {
-    Long id;
+    private Long id;
     @Email
     @NotNull
     @NotBlank
-    String email;
+    private String email;
     @NotNull
     @NotBlank
     @Pattern(regexp = "^\\S*$")
-    String login;
-    String name;
+    private String login;
+    private String name;
     @Past
-    LocalDate birthday;
+    private LocalDate birthday;
 }

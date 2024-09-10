@@ -18,7 +18,6 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
-    private final Long MAX_DESCRIPTION_LENGTH = 200L;
     private final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
@@ -32,10 +31,6 @@ public class FilmController {
         if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
             log.warn("Указана слишком старая дата релиза");
             throw new ValidationException("Дата релиза не может быть раньше " + VALID_RELEASE_DATE);
-        }
-        if (film.getDuration() < 0) {
-            log.warn("Указана отрицательная продолжительность фильма");
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
         }
         film.setId(getNextId());
         log.trace("Фильму \"{}\" присвоен id = {}", film.getName(), film.getId());
@@ -52,15 +47,15 @@ public class FilmController {
         }
         if (films.containsKey(film.getId())) {
             Film oldFilm = films.get(film.getId());
-            oldFilm.setName(film.getName());
-            if (film.getReleaseDate().isAfter(VALID_RELEASE_DATE)) {
-                oldFilm.setReleaseDate(film.getReleaseDate());
+            if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
                 log.trace("Дата релиза фильма \"{}\" изменена", oldFilm.getName());
+                throw new ValidationException("Дата релиза не может быть раньше " + VALID_RELEASE_DATE);
+            } else {
+                oldFilm.setReleaseDate(film.getReleaseDate());
             }
-            if (film.getDuration() >= 0) {
-                oldFilm.setDuration(film.getDuration());
-                log.trace("Продолжительность фильма \"{}\" изменена", oldFilm.getName());
-            }
+            oldFilm.setName(film.getName());
+            oldFilm.setDescription(film.getDescription());
+            oldFilm.setDuration(film.getDuration());
             log.debug("Информация о фильме {} (id = {}) изменена", oldFilm.getName(), oldFilm.getId());
             return oldFilm;
         }
