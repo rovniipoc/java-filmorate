@@ -18,7 +18,7 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
-    private final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @GetMapping
     public Collection<Film> findAll() {
