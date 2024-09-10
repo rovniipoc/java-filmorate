@@ -35,8 +35,8 @@ public class UserController {
         }
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            log.trace("При создании имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано"
-                    , user.getLogin(), user.getEmail());
+            log.trace("При создании имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
+                    user.getLogin(), user.getEmail());
         }
         user.setId(getNextId());
         log.trace("Пользователю {} ({}) присвоен id = {}", user.getLogin(), user.getEmail(), user.getId());
