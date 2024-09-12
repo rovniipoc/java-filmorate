@@ -220,7 +220,7 @@ class FilmControllerTests {
         film2.setId(null);
         film2Json = objectWriter.writeValueAsString(film2);
         mockMvc.perform(put("/films").content(film2Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
         List<Film> filmList = new ArrayList<>();
         filmList.add(film1);

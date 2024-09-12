@@ -316,7 +316,7 @@ public class UserControllerTest {
         user2.setId(null);
         user2Json = objectWriter.writeValueAsString(user2);
         mockMvc.perform(put("/users").content(user2Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
         List<User> userList = new ArrayList<>();
         userList.add(user1);

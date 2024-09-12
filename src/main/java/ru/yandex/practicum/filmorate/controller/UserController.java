@@ -17,73 +17,62 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Long, User> users = new HashMap<>();
+    private Long idCounter = 0L;
 
     @GetMapping
     public Collection<User> findAll() {
-        log.debug("Отправка списка пользователей");
+        log.info("Пришел запрос Get /users");
+        log.info("Отправлен ответ Get /users с телом {}", users.values());
         return users.values();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        if (users.values()
-                .stream()
-                .map(User::getEmail)
-                .anyMatch(email -> email.equals(user.getEmail()))) {
-            log.warn("При создании указан занятый email");
-            throw new ValidationException("Этот email уже используется");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.trace("При создании имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
-                    user.getLogin(), user.getEmail());
-        }
+        log.info("Пришел запрос Post /users с телом {}", user);
+        emailValidate(user);
+        nameUpdate(user);
         user.setId(getNextId());
-        log.trace("Пользователю {} ({}) присвоен id = {}", user.getLogin(), user.getEmail(), user.getId());
         users.put(user.getId(), user);
-        log.debug("Добавлен пользователь {} ({})", user.getLogin(), user.getEmail());
+        log.info("Отправлен ответ Post /users с телом {}", user);
         return user;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        if (user.getId() == null) {
-            log.warn("В запросе отсутствует id");
-            throw new ValidationException("Id должен быть указан");
+        log.info("Пришел запрос Put /users с телом {}", user);
+        if (!users.containsKey(user.getId())) {
+            log.warn("Ошибка при обработке запроса Put /users с телом {}: указанный id не найден", user);
+            throw new NotFoundException("Пользователь с id = " + user.getId() + " не найден");
         }
-        if (users.containsKey(user.getId())) {
-            User oldUser = users.get(user.getId());
-            if (!oldUser.getEmail().equals(user.getEmail()) && users.values()
-                    .stream()
-                    .map(User::getEmail)
-                    .anyMatch(email -> email.equals(user.getEmail()))) {
-                log.warn("При обновлении указан занятый email");
-                throw new ValidationException("Этот email уже используется");
-            }
-            oldUser.setEmail(user.getEmail());
-            oldUser.setBirthday(user.getBirthday());
-            oldUser.setLogin(user.getLogin());
-            if (user.getName() != null && !user.getName().isBlank()) {
-                oldUser.setName(user.getName());
-                log.trace("Имя пользователя {} ({}) изменено", oldUser.getLogin(), user.getEmail());
-            } else {
-                oldUser.setName(user.getLogin());
-                log.trace("При обновлении имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
-                        user.getLogin(), user.getEmail());
-            }
-            log.debug("Информация о пользователе {} ({}) изменена", oldUser.getLogin(), user.getEmail());
-            return oldUser;
+        if (!user.getEmail().equals(users.get(user.getId()).getEmail())) {
+            emailValidate(user);
         }
-        throw new NotFoundException("Пользователь с id = " + user.getId() + " не найден");
+        nameUpdate(user);
+        users.put(user.getId(), user);
+        log.info("Отправлен ответ Put /users с телом {}", user);
+        return user;
+    }
+
+    private void nameUpdate(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
+                    user.getLogin(), user.getEmail());
+        }
+    }
+
+    private void emailValidate(User user) throws ValidationException {
+        if (users.values()
+                .stream()
+                .map(User::getEmail)
+                .anyMatch(email -> email.equals(user.getEmail()))) {
+            log.warn("Ошибка при обработке запроса с телом {}: указанный email уже используется", user);
+            throw new ValidationException("Этот email уже используется");
+        }
     }
 
     private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        log.trace("Счетчик id пользователей увеличен");
-        return ++currentMaxId;
+        log.trace("Счетчик id фильмов увеличен");
+        return ++idCounter;
     }
 }
