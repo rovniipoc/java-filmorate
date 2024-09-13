@@ -24,8 +24,9 @@ public class FilmController {
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Пришел запрос Get /films");
-        log.info("Отправлен ответ Get /films с телом {}", films.values());
-        return films.values();
+        Collection<Film> response = films.values();
+        log.info("Отправлен ответ Get /films с телом {}", response);
+        return response;
     }
 
     @PostMapping

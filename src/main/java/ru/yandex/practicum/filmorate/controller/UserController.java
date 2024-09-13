@@ -22,8 +22,9 @@ public class UserController {
     @GetMapping
     public Collection<User> findAll() {
         log.info("Пришел запрос Get /users");
-        log.info("Отправлен ответ Get /users с телом {}", users.values());
-        return users.values();
+        Collection<User> response = users.values();
+        log.info("Отправлен ответ Get /users с телом {}", response);
+        return response;
     }
 
     @PostMapping
