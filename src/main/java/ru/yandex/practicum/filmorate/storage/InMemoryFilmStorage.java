@@ -53,6 +53,15 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Film get(Long id) {
+        if (!films.containsKey(id)) {
+            log.warn("Ошибка при поиске film с id {}: указанный id не найден", id);
+            throw new NotFoundException("Фильм с id = " + id + " не найден");
+        }
+        return films.get(id);
+    }
+
     private void releaseDateValidation(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
             log.warn("Ошибка при обработке запроса с телом {}: указанная дата релиза слишком старая", film);
