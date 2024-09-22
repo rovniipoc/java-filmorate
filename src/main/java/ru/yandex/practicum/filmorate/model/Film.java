@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -17,5 +18,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private Long duration;
+    private Set<Long> likes;
 
 }
