@@ -47,4 +47,24 @@ public class UserService {
                 .map(userStorage::get)
                 .toList();
     }
+
+    public Collection<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userStorage.get(id);
+    }
+
+    public User create(User user) {
+        return userStorage.add(user);
+    }
+
+    public User delete(User user) {
+        return userStorage.remove(user);
+    }
+
+    public User update(User user) {
+        return userStorage.update(user);
+    }
 }
