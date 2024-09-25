@@ -1,78 +1,92 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
-    private final Map<Long, User> users = new HashMap<>();
-    private Long idCounter = 0L;
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> findAll() {
         log.info("Пришел запрос Get /users");
-        log.info("Отправлен ответ Get /users с телом {}", users.values());
-        return users.values();
+        Collection<User> response = userService.findAll();
+        log.info("Сформирован ответ Get /users с телом {}", response);
+        return response;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        log.info("Пришел запрос Get /users/{}", id);
+        User response = userService.getUserById(id);
+        log.info("Отправлен ответ Get /users/{} с телом: {}", id, response);
+        return response;
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriends(@PathVariable Long id) {
+        log.info("Пришел запрос Get /users/{}/friends", id);
+        Collection<User> response = userService.getFriends(id);
+        log.info("Отправлен ответ Get /users/{}/friends с телом: {}", id, response);
+        return response;
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info("Пришел запрос Get /users/{}/friends/common/{}", id, otherId);
+        Collection<User> response = userService.getCommonFriends(id, otherId);
+        log.info("Отправлен ответ Get /users/{}/friends/common/{} с телом: {}", id, otherId, response);
+        return response;
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Пришел запрос Post /users с телом {}", user);
-        emailValidate(user);
-        nameUpdate(user);
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.info("Отправлен ответ Post /users с телом {}", user);
-        return user;
+        User response = userService.create(user);
+        log.info("Сформирован ответ Post /users с телом {}", response);
+        return response;
+    }
+
+    @DeleteMapping
+    public User delete(@Valid @RequestBody User user) {
+        log.info("Пришел запрос Delete /users с телом {}", user);
+        User response = userService.delete(user);
+        log.info("Сформирован ответ Delete /users с телом {}", response);
+        return response;
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User unfriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Пришел запрос Delete /users/{}/friends/{}", id, friendId);
+        User response = userService.unfriend(id, friendId);
+        log.info("Отправлен ответ Delete /users/{}/friends/{} с телом: {}", id, friendId, response);
+        return response;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         log.info("Пришел запрос Put /users с телом {}", user);
-        if (!users.containsKey(user.getId())) {
-            log.warn("Ошибка при обработке запроса Put /users с телом {}: указанный id не найден", user);
-            throw new NotFoundException("Пользователь с id = " + user.getId() + " не найден");
-        }
-        if (!user.getEmail().equals(users.get(user.getId()).getEmail())) {
-            emailValidate(user);
-        }
-        nameUpdate(user);
-        users.put(user.getId(), user);
-        log.info("Отправлен ответ Put /users с телом {}", user);
-        return user;
+        User response = userService.update(user);
+        log.info("Отправлен ответ Put /users с телом {}", response);
+        return response;
     }
 
-    private void nameUpdate(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
-                    user.getLogin(), user.getEmail());
-        }
+    @PutMapping("/{id}/friends/{friendId}")
+    public User makeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Пришел запрос Put /users/{}/friends/{}", id, friendId);
+        User response = userService.makeFriends(id, friendId);
+        log.info("Отправлен ответ Put /users/{}/friends/{} с телом: {}", id, friendId, response);
+        return response;
     }
 
-    private void emailValidate(User user) throws ValidationException {
-        if (users.values()
-                .stream()
-                .map(User::getEmail)
-                .anyMatch(email -> email.equals(user.getEmail()))) {
-            log.warn("Ошибка при обработке запроса с телом {}: указанный email уже используется", user);
-            throw new ValidationException("Этот email уже используется");
-        }
-    }
-
-    private long getNextId() {
-        log.trace("Счетчик id фильмов увеличен");
-        return ++idCounter;
-    }
 }

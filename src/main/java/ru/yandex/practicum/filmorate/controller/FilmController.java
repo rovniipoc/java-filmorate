@@ -1,65 +1,85 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
 
-    private static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
-    private final Map<Long, Film> films = new HashMap<>();
-    private Long idCounter = 0L;
+    private final FilmService filmService;
 
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Пришел запрос Get /films");
-        log.info("Отправлен ответ Get /films с телом {}", films.values());
-        return films.values();
+        Collection<Film> response = filmService.getAll();
+        log.info("Отправлен ответ Get /films с телом: {}", response);
+        return response;
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        log.info("Пришел запрос Get /films/{}", id);
+        Film response = filmService.getFilmById(id);
+        log.info("Отправлен ответ Get /films/{} с телом: {}", id, response);
+        return response;
+    }
+
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") Long count) {
+        log.info("Пришел запрос Get /films/popular");
+        Collection<Film> response = filmService.getPopularFilms(count);
+        log.info("Отправлен ответ Get /films/popular с телом: {}", response);
+        return response;
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Пришел запрос Post /films с телом {}", film);
-        releaseDateValidation(film);
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Отправлен ответ Post /films с телом {}", film);
-        return film;
+        Film response = filmService.create(film);
+        log.info("Отправлен ответ Post /films с телом {}", response);
+        return response;
+    }
+
+    @DeleteMapping
+    public Film delete(@Valid @RequestBody Film film) {
+        log.info("Пришел запрос Delete /films с телом {}", film);
+        Film response = filmService.delete(film);
+        log.info("Отправлен ответ Delete /films с телом {}", response);
+        return response;
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Film unlike(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("Пришел запрос Delete /films/{}/like/{}", id, userId);
+        Film response = filmService.unlike(id, userId);
+        log.info("Отправлен ответ Delete /films/{}/like/{} с телом: {}", id, userId, response);
+        return response;
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         log.info("Пришел запрос Put /films с телом {}", film);
-        if (!films.containsKey(film.getId())) {
-            log.warn("Ошибка при обработке запроса Put /films с телом {}: указанный id не найден", film);
-            throw new NotFoundException("Id = " + film.getId() + " не найден");
-        }
-        releaseDateValidation(film);
-        films.put(film.getId(), film);
+        Film response = filmService.update(film);
         log.info("Отправлен ответ Put /films с телом {}", film);
-        return film;
+        return response;
     }
 
-    private void releaseDateValidation(Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
-            log.warn("Ошибка при обработке запроса с телом {}: указанная дата релиза слишком старая", film);
-            throw new ValidationException("Дата релиза не может быть раньше " + VALID_RELEASE_DATE);
-        }
+    @PutMapping("/{id}/like/{userId}")
+    public Film like(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("Пришел запрос Put /films/{}/like/{}", id, userId);
+        Film response = filmService.like(id, userId);
+        log.info("Отправлен ответ Put /films/{}/like/{} с телом: {}", id, userId, response);
+        return response;
     }
 
-    private long getNextId() {
-        log.trace("Счетчик id фильмов увеличен");
-        return ++idCounter;
-    }
+
 }
