@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class BaseRepository<T> {
-    protected JdbcTemplate jdbc;
+    protected final JdbcTemplate jdbc;
     protected final RowMapper<T> mapper;
 
     protected T findOne(String query, Object... params) {
@@ -24,6 +24,11 @@ public class BaseRepository<T> {
 
     protected boolean delete(String query, Long id) {
         int rowsDeleted = jdbc.update(query, id);
+        return rowsDeleted > 0;
+    }
+
+    protected boolean delete(String query, Object... ids) {
+        int rowsDeleted = jdbc.update(query, ids);
         return rowsDeleted > 0;
     }
 

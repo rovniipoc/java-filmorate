@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS films (
             description VARCHAR NOT NULL,
             releaseDate TIMESTAMP WITH TIME ZONE NOT NULL,
             duration BIGINT,
-            rating_id BIGINT NOT NULL REFERENCES ratings(id)
+            rating_id INT NOT NULL REFERENCES ratings(id)
           );
 
 CREATE TABLE IF NOT EXISTS genres (
