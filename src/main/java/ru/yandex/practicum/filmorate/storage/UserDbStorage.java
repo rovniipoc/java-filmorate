@@ -23,6 +23,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String USER_FRIENDSHIP_QUERY = "SELECT * FROM users WHERE id IN (SELECT user_friend_id FROM user_friends WHERE user_id = ?)";
     private static final String USER_COMMON_FRIENDSHIP_QUERY = "SELECT * FROM users WHERE id IN (SELECT user_friend_id FROM user_friends WHERE user_id = ?) " +
             "AND id IN (SELECT user_friend_id FROM user_friends WHERE user_id = ?)";
+    private static final String DELETE_ALL_QUERY = "DELETE FROM users";
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper,
                          @Autowired FriendshipDbStorage friendshipDbStorage) {
@@ -53,6 +54,10 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         Long id = user.getId();
         delete(DELETE_QUERY, id);
         return user;
+    }
+
+    public void removeAll() {
+        delete(DELETE_ALL_QUERY);
     }
 
     @Override

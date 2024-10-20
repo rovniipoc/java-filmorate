@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.mapper.UserRowMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +29,7 @@ public class UserDbStorageTest {
     @BeforeEach
     public void addTestUsers() {
         userList.clear();
+        userDbStorage.removeAll();
 
         User user1 = new User();
         user1.setName("testname1");
@@ -58,25 +58,26 @@ public class UserDbStorageTest {
 
     @Test
     void findUserByIdTest() {
-        User user1 = userDbStorage.get(1L);
-        assertEquals(userList.get(0).getName(), user1.getName());
 
-        User user2 = userDbStorage.get(2L);
-        assertEquals(userList.get(1).getName(), user2.getName());
+        User user1 = userList.get(0);
+        User user2 = userList.get(1);
+        User user3 = userList.get(2);
 
-        User user3 = userDbStorage.get(3L);
-        assertEquals(userList.get(2).getName(), user3.getName());
+        assertEquals(user1.getName(), userDbStorage.get(user1.getId()).getName());
+        assertEquals(user2.getName(), userDbStorage.get(user2.getId()).getName());
+        assertEquals(user3.getName(), userDbStorage.get(user3.getId()).getName());
     }
 
     @Test
     void findUnknownUserByIdTest() {
-        User user4 = userDbStorage.get(4L);
+
+        User user4 = userDbStorage.get(999L);
         assertNull(user4);
     }
 
     @Test
-    void getAllUsersShouldBeOk() throws Exception {
-        Collection<User> allUsers = userDbStorage.findAll();
-        assertEquals(userList, allUsers);
+    void getAllUsersShouldBeOk() {
+
+        assertEquals(userList, userDbStorage.findAll());
     }
 }
