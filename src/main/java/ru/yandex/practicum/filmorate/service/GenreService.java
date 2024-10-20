@@ -27,4 +27,8 @@ public class GenreService {
     public Collection<Genre> findAll() {
         return genreDbStorage.findAllGenres();
     }
+
+    public void deleteAll() {
+        genreDbStorage.removeAll();
+    }
 }

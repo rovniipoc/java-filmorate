@@ -14,6 +14,7 @@ public class GenreDbStorage extends BaseRepository<Genre> {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM genres WHERE id = ?";
     private static final String INSERT_QUERY = "INSERT INTO genres(id, name) VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM genres WHERE id = ?";
+    private static final String DELETE_ALL_QUERY = "DELETE FROM genres";
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
         super(jdbc, mapper);
@@ -39,6 +40,12 @@ public class GenreDbStorage extends BaseRepository<Genre> {
         delete(
                 DELETE_QUERY,
                 genre.getId()
+        );
+    }
+
+    public void removeAll() {
+        delete(
+                DELETE_ALL_QUERY
         );
     }
 }
