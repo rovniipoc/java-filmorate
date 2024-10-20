@@ -27,6 +27,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ?, " +
             "duration = ?, rating_id = ? WHERE id = ?";
     public static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
+    private static final String DELETE_ALL_QUERY = "DELETE FROM films";
 
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper,
                          @Autowired LikeDbStorage likeDbStorage,
@@ -80,6 +81,11 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         Long id = film.getId();
         delete(DELETE_QUERY, id);
         return film;
+    }
+
+    @Override
+    public void removeAll() {
+        delete(DELETE_ALL_QUERY);
     }
 
     @Override

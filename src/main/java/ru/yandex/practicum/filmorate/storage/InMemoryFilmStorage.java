@@ -39,6 +39,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public void removeAll() {
+        films.clear();
+    }
+
+    @Override
     public Film update(Film film) {
         if (!films.containsKey(film.getId())) {
             log.warn("Ошибка при обновлении film с телом {}: указанный id не найден", film);

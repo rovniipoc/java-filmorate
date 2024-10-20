@@ -54,6 +54,11 @@ public class FilmController {
         return response;
     }
 
+    @DeleteMapping("/all")
+    public void deleteAll() {
+        filmService.deleteAll();
+    }
+
     @DeleteMapping("/{id}/like/{userId}")
     public Film unlike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Пришел запрос Delete /films/{}/like/{}", id, userId);

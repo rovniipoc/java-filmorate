@@ -65,6 +65,10 @@ public class FilmService {
         return filmStorage.remove(film);
     }
 
+    public void deleteAll() {
+        filmStorage.removeAll();
+    }
+
     public Film update(Film film) {
         releaseDateValidation(film);
         return filmStorage.update(film);
