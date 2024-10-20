@@ -43,10 +43,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("Пришел запрос Post /films с телом {}", film);
-        Film response = filmService.create(film);
-        log.info("Отправлен ответ Post /films с телом {}", response);
-        return response;
+        return filmService.create(film);
     }
 
     @DeleteMapping
@@ -55,6 +52,11 @@ public class FilmController {
         Film response = filmService.delete(film);
         log.info("Отправлен ответ Delete /films с телом {}", response);
         return response;
+    }
+
+    @DeleteMapping("/all")
+    public void deleteAll() {
+        filmService.deleteAll();
     }
 
     @DeleteMapping("/{id}/like/{userId}")
