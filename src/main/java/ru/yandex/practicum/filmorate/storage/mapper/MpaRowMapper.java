@@ -15,9 +15,5 @@ public class MpaRowMapper implements RowMapper<Mpa> {
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .build();
-//        Rating rating = new Rating();
-//        rating.setId(rs.getLong("id"));
-//        rating.setName(rs.getString("name"));
-//        return rating;
     }
 }

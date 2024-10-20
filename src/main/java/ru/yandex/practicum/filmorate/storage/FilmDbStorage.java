@@ -110,9 +110,6 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                     .map(FilmGenre::getGenreId)
                     .map(genreDbStorage::getGenre)
                     .toList());
-//            film.getGenre().addAll(filmGenreDbStorage.findGenresByFilm(film).stream()
-//                    .map(FilmGenre::getGenreId)
-//                    .map(genreId -> genreDbStorage.getGenre(genreId).getName()).toList());
             film.getMpa().setName(mpaDbStorage.getMpa(film.getMpa().getId()).getName());
         }
         return film;

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 public class Mpa {
-    private Long id = 0L;
+    private Long id;
     private String name;
 
 //    G - у фильма нет возрастных ограничений

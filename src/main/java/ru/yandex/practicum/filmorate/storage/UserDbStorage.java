@@ -95,9 +95,6 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     public Collection<User> getUserFriends(Long id) {
         Collection<User> users = findMany(USER_FRIENDSHIP_QUERY, id);
         return loadFriends(users);
-//        return friendshipDbStorage.findAllFriendsIdByUser(id).stream()
-//                .map(this::get)
-//                .toList();
     }
 
     public Collection<User> getCommonFriends(Long id1, Long id2) {

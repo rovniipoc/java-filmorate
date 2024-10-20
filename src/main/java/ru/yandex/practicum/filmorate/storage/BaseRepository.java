@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.sql.PreparedStatement;
-import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor

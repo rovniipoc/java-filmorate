@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,11 +36,6 @@ public class UserService {
 
     public Collection<User> getCommonFriends(Long id1, Long id2) {
         return userStorage.getCommonFriends(id1, id2);
-
-//        return userStorage.findAll().stream()
-//                .filter(user -> user.getFriends().contains(id1))
-//                .filter(user -> user.getFriends().contains(id2))
-//                .toList();
     }
 
     public Collection<User> getFriends(Long id) {
@@ -77,12 +71,6 @@ public class UserService {
     }
 
     public User update(User user) {
-//        try {
-//            userStorage.get(user.getId());
-//        } catch (RuntimeException e) {
-//            throw new NotFoundException("NETY");
-//        }
-
         if (!user.getEmail().equals(getUserById(user.getId()).getEmail())) {
             emailValidate(user);
         }
