@@ -2,49 +2,56 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
 public class UserService {
 
     private final UserStorage userStorage;
 
-    public User makeFriends(Long id1, Long id2) {
-        User user1 = userStorage.get(id1);
-        User user2 = userStorage.get(id2);
-        user1.getFriends().add(user2.getId());
-        user2.getFriends().add(user1.getId());
-        return user1;
+    public UserService(@Autowired @Qualifier("UserDbStorage") UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+
+    public void makeFriends(Long id1, Long id2) {
+        existUserIdValidate(userStorage.get(id1));
+        existUserIdValidate(userStorage.get(id2));
+        userStorage.addFriend(id1, id2);
     }
 
     public User unfriend(Long id1, Long id2) {
-        User user1 = userStorage.get(id1);
-        User user2 = userStorage.get(id2);
-        user1.getFriends().remove(user2.getId());
-        user2.getFriends().remove(user1.getId());
-        return user1;
+        existUserIdValidate(userStorage.get(id1));
+        existUserIdValidate(userStorage.get(id2));
+        userStorage.removeFriend(id1, id2);
+        return getUserById(id1);
     }
 
     public Collection<User> getCommonFriends(Long id1, Long id2) {
-        return userStorage.findAll().stream()
-                .filter(user -> user.getFriends().contains(id1))
-                .filter(user -> user.getFriends().contains(id2))
-                .toList();
+        return userStorage.getCommonFriends(id1, id2);
+
+//        return userStorage.findAll().stream()
+//                .filter(user -> user.getFriends().contains(id1))
+//                .filter(user -> user.getFriends().contains(id2))
+//                .toList();
     }
 
     public Collection<User> getFriends(Long id) {
+        existUserIdValidate(userStorage.get(id));
         return getUsersByIds(userStorage.get(id).getFriends());
     }
 
     private Collection<User> getUsersByIds(Collection<Long> ids) {
         return ids.stream()
-                .map(userStorage::get)
+                .map(this::getUserById)
                 .toList();
     }
 
@@ -53,18 +60,56 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userStorage.get(id);
+        User user = userStorage.get(id);
+        existUserIdValidate(user);
+        return user;
     }
 
     public User create(User user) {
+        emailValidate(user);
+        nameUpdate(user);
         return userStorage.add(user);
     }
 
     public User delete(User user) {
+        existUserIdValidate(user);
         return userStorage.remove(user);
     }
 
     public User update(User user) {
+//        try {
+//            userStorage.get(user.getId());
+//        } catch (RuntimeException e) {
+//            throw new NotFoundException("NETY");
+//        }
+
+        if (!user.getEmail().equals(getUserById(user.getId()).getEmail())) {
+            emailValidate(user);
+        }
+        nameUpdate(user);
         return userStorage.update(user);
+    }
+
+    private void nameUpdate(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.trace("Имя пользователя {} ({}) приравнено его логину, т.к. оно не было указано",
+                    user.getLogin(), user.getEmail());
+        }
+    }
+
+    private void existUserIdValidate(User user) {
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+    }
+
+    private void emailValidate(User user) throws ValidationException {
+        if (findAll().stream()
+                .map(User::getEmail)
+                .anyMatch(email -> email.equals(user.getEmail()))) {
+            log.warn("Ошибка при обработке запроса с телом {}: указанный email уже используется", user);
+            throw new ValidationException("Этот email уже используется");
+        }
     }
 }

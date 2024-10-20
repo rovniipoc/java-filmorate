@@ -29,19 +29,19 @@ public class LikeDbStorage extends BaseRepository<Like> {
         return findMany(FIND_FILM_LIKES_QUERY, film.getId());
     }
 
-    public void addLike(User user, Film film) {
-        insert(
+    public void addLike(Long filmId, Long userId) {
+        update(
                 INSERT_QUERY,
-                film.getId(),
-                user.getId()
+                filmId,
+                userId
         );
     }
 
-    public void removeLike(User user, Film film) {
+    public void removeLike(Long filmId, Long userId) {
         delete(
                 DELETE_QUERY,
-                film.getId(),
-                user.getId()
+                filmId,
+                userId
         );
     }
 

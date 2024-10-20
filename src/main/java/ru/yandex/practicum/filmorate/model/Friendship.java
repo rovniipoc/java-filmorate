@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Friendship {
-    private Long firstUserId;
-    private Long secondUserId;
+    private Long userId;
+    private Long userFriendId;
 }

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
@@ -55,6 +55,16 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new NotFoundException("Фильм с id = " + id + " не найден");
         }
         return films.get(id);
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        films.get(filmId).getLikes().add(userId);
+    }
+
+    @Override
+    public void removeLike(Long filmId, Long userId) {
+        films.get(filmId).getLikes().remove(userId);
     }
 
     private long getNextId() {

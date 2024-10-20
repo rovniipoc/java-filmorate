@@ -8,10 +8,11 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
@@ -63,6 +64,31 @@ public class InMemoryUserStorage implements UserStorage {
             throw new NotFoundException("Пользователь с id = " + id + " не найден");
         }
         return users.get(id);
+    }
+
+    @Override
+    public void addFriend(Long userId, Long friendId) {
+        users.get(userId).getFriends().add(friendId);
+    }
+
+    @Override
+    public void removeFriend(Long userId, Long friendId) {
+        users.get(userId).getFriends().remove(friendId);
+    }
+
+    @Override
+    public Collection<User> getUserFriends(Long id) {
+        return users.get(id).getFriends().stream()
+                .map(this::get)
+                .toList();
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long id1, Long id2) {
+        return users.values().stream()
+                .filter(user -> user.getFriends().contains(id1))
+                .filter(user -> user.getFriends().contains(id2))
+                .toList();
     }
 
     private void nameUpdate(User user) {

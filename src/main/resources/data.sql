@@ -1,2 +1,14 @@
-INSERT INTO users (email, login, name, birthday)
-VALUES ('someemail@mail.ru', 'userlogin', 'username', '1994-10-19');
+INSERT INTO genres (name)
+VALUES ('Комедия'),
+       ('Драма'),
+       ('Мультфильм'),
+       ('Триллер'),
+       ('Документальный'),
+       ('Боевик');
+
+INSERT INTO ratings (name)
+VALUES ('G'),
+       ('PG'),
+       ('PG-13'),
+       ('R'),
+       ('NC-17');

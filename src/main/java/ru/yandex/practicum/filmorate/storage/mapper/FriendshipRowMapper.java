@@ -12,8 +12,8 @@ public class FriendshipRowMapper implements RowMapper<Friendship> {
     @Override
     public Friendship mapRow(ResultSet rs, int rowNum) throws SQLException {
         Friendship friendship = new Friendship();
-        friendship.setFirstUserId(rs.getLong("user_id"));
-        friendship.setSecondUserId(rs.getLong("user_friend_id"));
+        friendship.setUserId(rs.getLong("user_id"));
+        friendship.setUserFriendId(rs.getLong("user_friend_id"));
         return friendship;
     }
 }
