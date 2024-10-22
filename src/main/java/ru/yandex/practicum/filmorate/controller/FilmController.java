@@ -65,11 +65,10 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film unlike(@PathVariable Long id, @PathVariable Long userId) {
+    public void unlike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Пришел запрос Delete /films/{}/like/{}", id, userId);
-        Film response = filmService.unlike(id, userId);
-        log.info("Отправлен ответ Delete /films/{}/like/{} с телом: {}", id, userId, response);
-        return response;
+        filmService.unlike(id, userId);
+        log.info("Выполнен запрос Delete /films/{}/like/{}", id, userId);
     }
 
     @PutMapping
@@ -81,11 +80,10 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film like(@PathVariable Long id, @PathVariable Long userId) {
+    public void like(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Пришел запрос Put /films/{}/like/{}", id, userId);
-        Film response = filmService.like(id, userId);
-        log.info("Отправлен ответ Put /films/{}/like/{} с телом: {}", id, userId, response);
-        return response;
+        filmService.like(id, userId);
+        log.info("Выполнен запрос Put /films/{}/like/{}", id, userId);
     }
 
 

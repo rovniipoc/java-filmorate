@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -18,23 +19,18 @@ import java.util.Collection;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
     private static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    public FilmService(@Autowired @Qualifier("FilmDbStorage") FilmStorage filmStorage,
-                       @Autowired @Qualifier("UserDbStorage") UserStorage userStorage) {
+    public FilmService(@Autowired @Qualifier("FilmDbStorage") FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
     }
 
-    public Film like(Long filmId, Long userId) {
+    public void like(Long filmId, Long userId) {
         filmStorage.addLike(filmId, userId);
-        return filmStorage.get(filmId);
     }
 
-    public Film unlike(Long filmId, Long userId) {
+    public void unlike(Long filmId, Long userId) {
         filmStorage.removeLike(filmId, userId);
-        return filmStorage.get(filmId);
     }
 
     public Collection<Film> getPopularFilms(Long count) {
@@ -51,8 +47,8 @@ public class FilmService {
     public Film getFilmById(Long id) {
         try {
             return filmStorage.get(id);
-        } catch (RuntimeException e) {
-            throw new NotFoundException("Фильм не найден");
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("Фильм не найден, message: " + e.getMessage());
         }
     }
 
