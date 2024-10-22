@@ -73,6 +73,7 @@ public class BaseRepository<T> {
         }
     }
 
+    //TODO удалить метод
     protected void batchUpdate(String query, BatchPreparedStatementSetter bps) {
         try {
             int[] rowsUpdated = jdbc.batchUpdate(query, bps);

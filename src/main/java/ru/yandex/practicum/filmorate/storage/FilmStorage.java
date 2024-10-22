@@ -10,7 +10,7 @@ public interface FilmStorage {
 
     Film add(Film film);
 
-    Film remove(Film film);
+    void remove(Film film);
 
     void removeAll();
 

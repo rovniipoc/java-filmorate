@@ -57,8 +57,8 @@ public class FilmService {
         return filmStorage.add(film);
     }
 
-    public Film delete(Film film) {
-        return filmStorage.remove(film);
+    public void delete(Film film) {
+        filmStorage.remove(film);
     }
 
     public void deleteAll() {

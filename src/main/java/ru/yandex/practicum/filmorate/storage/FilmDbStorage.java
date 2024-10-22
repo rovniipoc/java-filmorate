@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -10,35 +11,27 @@ import ru.yandex.practicum.filmorate.model.FilmGenre;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Like;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 @Slf4j
 @Repository("FilmDbStorage")
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
-    private final LikeDbStorage likeDbStorage;
-    private final MpaDbStorage mpaDbStorage;
-    private final GenreDbStorage genreDbStorage;
-    private final FilmGenreDbStorage filmGenreDbStorage;
 
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String INSERT_QUERY = "INSERT INTO films (name, description, releaseDate, duration, rating_id) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM films WHERE id = ?";
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ?, " +
             "duration = ?, rating_id = ? WHERE id = ?";
-    public static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
     private static final String DELETE_ALL_QUERY = "DELETE FROM films";
 
-    public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper,
-                         @Autowired LikeDbStorage likeDbStorage,
-                         @Autowired MpaDbStorage mpaDbStorage,
-                         @Autowired GenreDbStorage genreDbStorage,
-                         @Autowired FilmGenreDbStorage filmGenreDbStorage) {
+    public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
-        this.likeDbStorage = likeDbStorage;
-        this.mpaDbStorage = mpaDbStorage;
-        this.genreDbStorage = genreDbStorage;
-        this.filmGenreDbStorage = filmGenreDbStorage;
     }
 
     @Override
@@ -67,20 +60,38 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 film.getMpa().getId()
         );
         if (!film.getGenres().isEmpty()) {
-            filmGenreDbStorage.addManyGenresToFilm(id,
-                    film.getGenres().stream()
-                    .map(Genre::getId)
-                    .toList());
+            saveGenres(film);
         }
         film.setId(id);
         return film;
     }
 
+    private void saveGenres(Film film) {
+        final Long filmId = film.getId();
+        jdbc.update("delete from FILM_GENRES where FILM_ID = ?", filmId);
+        final Set<Genre> genres = film.getGenres();
+        if (genres == null || genres.isEmpty()) {
+            return;
+        }
+        final ArrayList<Genre> genreList = new ArrayList<>(genres);
+        jdbc.batchUpdate(
+                "insert into FILM_GENRES (FILM_ID, GENRE_ID) values (?, ?)",
+                new BatchPreparedStatementSetter() {
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, filmId);
+                        ps.setLong(2, genreList.get(i).getId());
+                    }
+
+                    public int getBatchSize() {
+                        return genreList.size();
+                    }
+                });
+    }
+
     @Override
-    public Film remove(Film film) {
+    public void remove(Film film) {
         Long id = film.getId();
         delete(DELETE_QUERY, id);
-        return film;
     }
 
     @Override

@@ -29,13 +29,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film remove(Film film) {
+    public void remove(Film film) {
         if (!films.containsKey(film.getId())) {
             log.warn("Ошибка при удалении film с телом {}: указанный id не найден", film);
             throw new NotFoundException("Фильм с id = " + film.getId() + " не найден");
         }
         films.remove(film.getId());
-        return film;
     }
 
     @Override
