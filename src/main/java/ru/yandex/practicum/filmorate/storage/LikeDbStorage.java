@@ -6,43 +6,41 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.mapper.FilmRowMapper;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class LikeDbStorage extends BaseRepository<Like> {
 
     private static final String FIND_USER_LIKES_QUERY = "SELECT * FROM film_likes WHERE user_id = ?";
     private static final String FIND_FILM_LIKES_QUERY = "SELECT * FROM film_likes WHERE film_id = ?";
-    private static final String INSERT_QUERY = "INSERT INTO film_likes(film_id, user_id) VALUES (?, ?)";
-    private static final String DELETE_QUERY = "DELETE FROM film_likes WHERE film_id = ? AND user_id = ?";
+    private static final String ADD_LIKE_QUERY = "MERGE INTO film_likes (film_id, user_id) VALUES (?, ?)";
+    private static final String UPDATE_RATE_QUERY = "UPDATE films f SET rate = (SELECT COUNT(l.user_id) FROM film_likes fl WHERE fl.film_id = f.film_id) WHERE film_id = ?";
+    private static final String DELETE_LIKE_QUERY = "DELETE FROM film_likes WHERE film_id = ? AND user_id = ?";
+    private static final String GET_POPULAR_QUERY = "SELECT * FROM films f, mpa m WHERE f.mpa_id = m.mpa_id ORDER BY rate DESC LIMIT ?";
 
     public LikeDbStorage(JdbcTemplate jdbc, RowMapper<Like> mapper) {
         super(jdbc, mapper);
     }
 
-    public Collection<Like> findLikesByUser(User user) {
-        return findMany(FIND_USER_LIKES_QUERY, user.getId());
+    public void addLike(long filmId, long userId) {
+        jdbc.update(ADD_LIKE_QUERY, filmId, userId);
+        updateRate(filmId);
     }
 
-    public Collection<Like> findLikesByFilm(Film film) {
-        return findMany(FIND_FILM_LIKES_QUERY, film.getId());
+    private void updateRate(long filmId) {
+        jdbc.update(UPDATE_RATE_QUERY, filmId);
     }
 
-    public void addLike(Long filmId, Long userId) {
-        update(
-                INSERT_QUERY,
-                filmId,
-                userId
-        );
+    public void removeLike(long filmId, long userId) {
+        jdbc.update(DELETE_LIKE_QUERY, filmId, userId);
+        updateRate(filmId);
     }
 
-    public void removeLike(Long filmId, Long userId) {
-        delete(
-                DELETE_QUERY,
-                filmId,
-                userId
-        );
+    public List<Film> getPopular(int count) {
+        return jdbc.queryForList(GET_POPULAR_QUERY, Film.class, count);
     }
 
 }

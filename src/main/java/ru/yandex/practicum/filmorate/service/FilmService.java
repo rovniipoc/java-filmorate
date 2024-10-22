@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
@@ -19,18 +20,21 @@ import java.util.Collection;
 public class FilmService {
 
     private final FilmStorage filmStorage;
+    private final LikeDbStorage likeDbStorage;
     private static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
-    public FilmService(@Autowired @Qualifier("FilmDbStorage") FilmStorage filmStorage) {
+    public FilmService(@Autowired @Qualifier("FilmDbStorage") FilmStorage filmStorage,
+                       @Autowired LikeDbStorage likeDbStorage) {
         this.filmStorage = filmStorage;
+        this.likeDbStorage = likeDbStorage;
     }
 
     public void like(Long filmId, Long userId) {
-        filmStorage.addLike(filmId, userId);
+        likeDbStorage.addLike(filmId, userId);
     }
 
     public void unlike(Long filmId, Long userId) {
-        filmStorage.removeLike(filmId, userId);
+        likeDbStorage.removeLike(filmId, userId);
     }
 
     public Collection<Film> getPopularFilms(Long count) {

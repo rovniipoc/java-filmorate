@@ -111,8 +111,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 film.getId()
         );
         if (!film.getGenres().isEmpty()) {
-            filmGenreDbStorage.removeGenresFromFilm(film.getId());
-            filmGenreDbStorage.addManyGenresToFilm(film.getId(), film.getGenres().stream().map(Genre::getId).toList());
+            saveGenres(film);
         }
         return film;
     }
@@ -130,15 +129,5 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             film.getMpa().setName(mpaDbStorage.getMpa(film.getMpa().getId()).getName());
         }
         return film;
-    }
-
-    @Override
-    public void addLike(Long filmId, Long userId) {
-        likeDbStorage.addLike(filmId, userId);
-    }
-
-    @Override
-    public void removeLike(Long filmId, Long userId) {
-        likeDbStorage.removeLike(filmId, userId);
     }
 }
