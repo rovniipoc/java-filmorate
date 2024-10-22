@@ -19,7 +19,7 @@ public class LikeDbStorage extends BaseRepository<Like> {
     private static final String ADD_LIKE_QUERY = "MERGE INTO film_likes (film_id, user_id) VALUES (?, ?)";
     private static final String UPDATE_RATE_QUERY = "UPDATE films f SET rate = (SELECT COUNT(l.user_id) FROM film_likes fl WHERE fl.film_id = f.film_id) WHERE film_id = ?";
     private static final String DELETE_LIKE_QUERY = "DELETE FROM film_likes WHERE film_id = ? AND user_id = ?";
-    private static final String GET_POPULAR_QUERY = "SELECT * FROM films f, mpa m WHERE f.mpa_id = m.mpa_id ORDER BY rate DESC LIMIT ?";
+    private static final String GET_POPULAR_QUERY = "SELECT * FROM films f, ratings r WHERE f.rating_id = r.id ORDER BY rate DESC LIMIT ?";
 
     public LikeDbStorage(JdbcTemplate jdbc, RowMapper<Like> mapper) {
         super(jdbc, mapper);

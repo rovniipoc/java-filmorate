@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS user_friends (
 
 CREATE TABLE IF NOT EXISTS ratings (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(100) NOT NULL
+            mpa_name VARCHAR(100) NOT NULL
           );
 
 CREATE TABLE IF NOT EXISTS films (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS film_likes (
 
 CREATE TABLE IF NOT EXISTS genres (
             id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(100) NOT NULL
+            genre_name VARCHAR(100) NOT NULL
           );
 
 CREATE TABLE IF NOT EXISTS film_genres (

@@ -27,7 +27,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String DELETE_QUERY = "DELETE FROM films WHERE id = ?";
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ?, " +
             "duration = ?, rating_id = ? WHERE id = ?";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
+    private static final String FIND_BY_ID_QUERY = "SELECT * FROM films f, ratings r WHERE f.rating_id = r.id AND f.id = ?";
     private static final String DELETE_ALL_QUERY = "DELETE FROM films";
 
     public FilmDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
@@ -119,14 +119,10 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Film get(Long id) {
         Film film = findOne(FIND_BY_ID_QUERY, id);
-        if (film != null) {
-            film.getLikes().addAll(likeDbStorage.findLikesByFilm(film).stream()
-                    .map(Like::getUserId).toList());
             film.getGenres().addAll(filmGenreDbStorage.findGenresByFilm(film).stream()
                     .map(FilmGenre::getGenreId)
                     .map(genreDbStorage::getGenre)
                     .toList());
-            film.getMpa().setName(mpaDbStorage.getMpa(film.getMpa().getId()).getName());
         }
         return film;
     }

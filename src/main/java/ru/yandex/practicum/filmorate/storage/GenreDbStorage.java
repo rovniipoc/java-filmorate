@@ -12,7 +12,7 @@ public class GenreDbStorage extends BaseRepository<Genre> {
 
     private static final String FIND_ALL_QUERY = "SELECT * FROM genres ORDER BY id";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM genres WHERE id = ?";
-    private static final String INSERT_QUERY = "INSERT INTO genres(id, name) VALUES (?, ?)";
+    private static final String INSERT_QUERY = "INSERT INTO genres(id, genre_name) VALUES (?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM genres WHERE id = ?";
     private static final String DELETE_ALL_QUERY = "DELETE FROM genres";
 
