@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -90,19 +89,4 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
                 id2);
     }
 
-    //TODO удалить неиспользуемый метод (метод загрузки друзей в User)
-//    private Collection<User> loadFriends(Collection<User> users) {
-//        if (!users.isEmpty()) {
-//            Collection<Friendship> friendshipCollection = friendshipDbStorage.getAll();
-//            for (User user : users) {
-//                user.getFriends().addAll(friendshipCollection
-//                        .stream()
-//                        .filter(friendship -> friendship.getUserId().equals(user.getId()))
-//                        .map(Friendship::getUserFriendId)
-//                        .toList()
-//                );
-//            }
-//        }
-//        return users;
-//    }
 }

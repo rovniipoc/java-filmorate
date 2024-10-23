@@ -50,11 +50,10 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public Film delete(@Valid @RequestBody Film film) {
+    public void delete(@Valid @RequestBody Film film) {
         log.info("Пришел запрос Delete /films с телом {}", film);
-        Film response = filmService.delete(film);
-        log.info("Отправлен ответ Delete /films с телом {}", response);
-        return response;
+        filmService.delete(film);
+        log.info("Выполнен запрос Delete /films");
     }
 
     @DeleteMapping("/all")

@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -73,15 +72,4 @@ public class BaseRepository<T> {
         }
     }
 
-    //TODO удалить метод
-    protected void batchUpdate(String query, BatchPreparedStatementSetter bps) {
-        try {
-            int[] rowsUpdated = jdbc.batchUpdate(query, bps);
-            if (rowsUpdated.length == 0) {
-                throw new RuntimeException("Не удалось обновить данные");
-            }
-        } catch (DataIntegrityViolationException exception) {
-            throw new ValidationException(exception.getMessage());
-        }
-    }
 }

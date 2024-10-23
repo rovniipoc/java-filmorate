@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS films (
             description VARCHAR(200),
             releaseDate DATE,
             duration BIGINT,
+            rate BIGINT,
             rating_id BIGINT REFERENCES ratings(id)
           );
 

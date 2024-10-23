@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,7 @@ public class GenreDbStorage extends BaseRepository<Genre> {
     public void load(Collection<Film> films) {
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
         final Map<Long, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
-        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.genre_id = g.id AND fg.film_id IN (" + inSql + ")";
+        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.genre_id = g.id AND fg.film_id IN (" + inSql + ") ORDER BY g.id";
         jdbc.query(sqlQuery, (rs) -> {
             final Film film = filmById.get(rs.getLong("film_id"));
             film.addGenre(get(rs.getLong("genre_id")));

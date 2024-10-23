@@ -19,7 +19,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private Long duration;
-    private Long rate;
+    private Long rate = 0L;
     private Set<Genre> genres = new HashSet<>();
     private Mpa mpa;
 

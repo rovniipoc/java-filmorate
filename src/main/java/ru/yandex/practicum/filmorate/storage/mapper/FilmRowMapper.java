@@ -23,4 +23,16 @@ public class FilmRowMapper implements RowMapper<Film> {
         film.setMpa(Mpa.builder().id(rs.getLong("rating_id")).name(rs.getString("mpa_name")).build());
         return film;
     }
+
+    public static Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
+        Film film = new Film();
+        film.setId(rs.getLong("id"));
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
+        film.setDuration(rs.getLong("duration"));
+        film.setRate(rs.getLong("rate"));
+        film.setMpa(Mpa.builder().id(rs.getLong("rating_id")).name(rs.getString("mpa_name")).build());
+        return film;
+    }
 }

@@ -67,7 +67,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         Film film2 = new Film();
         film2.setId(2L);
@@ -78,7 +78,7 @@ class FilmControllerTests {
         film2.setMpa(new Mpa(1L, "G"));
         String film2Json = objectWriter.writeValueAsString(film2);
         mockMvc.perform(post("/films").content(film2Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         List<Film> filmList = new ArrayList<>();
         filmList.add(film1);
@@ -179,7 +179,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         Film film2 = new Film();
         film2.setId(1L);
@@ -217,7 +217,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         //Попытка обновить фильм с несуществующим id
         Film film2 = new Film();
@@ -263,7 +263,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         //Попытка обновить имя фильм на пустое значение
         Film film2 = new Film();
@@ -309,7 +309,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         Film film2 = new Film();
         film2.setId(1L);
@@ -348,7 +348,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         Film film2 = new Film();
         film2.setId(1L);
@@ -388,7 +388,7 @@ class FilmControllerTests {
         film1.setMpa(new Mpa(1L, "G"));
         String film1Json = objectWriter.writeValueAsString(film1);
         mockMvc.perform(post("/films").content(film1Json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
         Film film2 = new Film();
         film2.setId(1L);

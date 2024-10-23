@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Like;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.*;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -21,8 +18,8 @@ import java.util.Set;
 @Repository("FilmDbStorage")
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
-    private static final String FIND_ALL_QUERY = "SELECT * FROM films";
-    private static final String INSERT_QUERY = "INSERT INTO films (name, description, releaseDate, duration, rating_id) VALUES (?, ?, ?, ?, ?)";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM films f, ratings r WHERE f.rating_id = r.id";
+    private static final String INSERT_QUERY = "INSERT INTO films (name, description, releaseDate, duration, rate, rating_id) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM films WHERE id = ?";
     private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ?, " +
             "duration = ?, rating_id = ? WHERE id = ?";
@@ -35,17 +32,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Collection<Film> findAll() {
-        Collection<Film> result = findMany(FIND_ALL_QUERY).stream()
-                .peek(film -> film.getLikes().addAll(likeDbStorage.findLikesByFilm(film).stream()
-                        .map(Like::getUserId)
-                        .toList()))
-                .peek(film -> film.getGenres().addAll(filmGenreDbStorage.findGenresByFilm(film).stream()
-                        .map(FilmGenre::getGenreId)
-                        .map(genreDbStorage::getGenre)
-                        .toList()))
-                .peek(film -> film.getMpa().setName(mpaDbStorage.getMpa(film.getMpa().getId()).getName()))
-                .toList();
-        return result;
+        return findMany(FIND_ALL_QUERY);
     }
 
     @Override
@@ -56,12 +43,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
+                film.getRate(),
                 film.getMpa().getId()
         );
+        film.setId(id);
         if (!film.getGenres().isEmpty()) {
             saveGenres(film);
         }
-        film.setId(id);
         return film;
     }
 
@@ -72,6 +60,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         if (genres == null || genres.isEmpty()) {
             return;
         }
+        genreIdValidate(genres);
         final ArrayList<Genre> genreList = new ArrayList<>(genres);
         jdbc.batchUpdate(
                 "insert into FILM_GENRES (FILM_ID, GENRE_ID) values (?, ?)",
@@ -118,5 +107,17 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Film get(Long id) {
         return findOne(FIND_BY_ID_QUERY, id);
+    }
+
+    private void genreIdValidate(Set<Genre> genres) {
+        Long genreMaxId = jdbc.queryForObject("SELECT COUNT(*) FROM ratings", Long.class);
+        if (genreMaxId == null) {
+            return;
+        }
+        for (Genre genre : genres) {
+            if (genre.getId() > genreMaxId) {
+                throw new ValidationException("Указан несуществующий Mpa");
+            }
+        }
     }
 }

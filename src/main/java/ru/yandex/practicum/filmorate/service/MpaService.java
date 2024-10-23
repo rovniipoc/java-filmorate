@@ -28,7 +28,4 @@ public class MpaService {
         return mpaDbStorage.findAllMpas();
     }
 
-    public void deleteAll() {
-        mpaDbStorage.removeAll();
-    }
 }
