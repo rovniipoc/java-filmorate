@@ -118,12 +118,6 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     @Override
     public Film get(Long id) {
-        Film film = findOne(FIND_BY_ID_QUERY, id);
-            film.getGenres().addAll(filmGenreDbStorage.findGenresByFilm(film).stream()
-                    .map(FilmGenre::getGenreId)
-                    .map(genreDbStorage::getGenre)
-                    .toList());
-        }
-        return film;
+        return findOne(FIND_BY_ID_QUERY, id);
     }
 }
