@@ -23,4 +23,8 @@ public class Film {
     private Set<Genre> genres = new HashSet<>();
     private Mpa mpa;
 
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
+
 }

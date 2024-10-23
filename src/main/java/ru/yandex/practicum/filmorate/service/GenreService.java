@@ -17,7 +17,7 @@ public class GenreService {
     private final GenreDbStorage genreDbStorage;
 
     public Genre getGenreById(Long id) {
-        Genre genre = genreDbStorage.getGenre(id);
+        Genre genre = genreDbStorage.get(id);
         if (genre == null) {
             throw new NotFoundException("Жанр с указанным id не найден");
         }
@@ -25,7 +25,7 @@ public class GenreService {
     }
 
     public Collection<Genre> findAll() {
-        return genreDbStorage.findAllGenres();
+        return genreDbStorage.getAll();
     }
 
     public void deleteAll() {

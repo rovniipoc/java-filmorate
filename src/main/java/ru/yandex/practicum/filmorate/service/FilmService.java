@@ -9,11 +9,15 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.LikeDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -21,12 +25,15 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final LikeDbStorage likeDbStorage;
+    private final GenreDbStorage genreDbStorage;
     private static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     public FilmService(@Autowired @Qualifier("FilmDbStorage") FilmStorage filmStorage,
-                       @Autowired LikeDbStorage likeDbStorage) {
+                       @Autowired LikeDbStorage likeDbStorage,
+                       @Autowired GenreDbStorage genreDbStorage) {
         this.filmStorage = filmStorage;
         this.likeDbStorage = likeDbStorage;
+        this.genreDbStorage = genreDbStorage;
     }
 
     public void like(Long filmId, Long userId) {
@@ -50,7 +57,9 @@ public class FilmService {
 
     public Film getFilmById(Long id) {
         try {
-            return filmStorage.get(id);
+            final Film film = filmStorage.get(id);
+            genreDbStorage.load(Collections.singletonList(film));
+            return film;
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Фильм не найден, message: " + e.getMessage());
         }
