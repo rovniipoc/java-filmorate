@@ -26,25 +26,4 @@ public class FilmGenreDbStorage extends BaseRepository<FilmGenre> {
     public Collection<FilmGenre> findGenresByFilm(Film film) {
         return findMany(FIND_BY_ID_QUERY, film.getId());
     }
-
-    public void addGenreToFilm(Long filmId, Long genreId) {
-        update(
-                INSERT_QUERY,
-                filmId,
-                genreId
-        );
-    }
-
-    public void removeGenresFromFilm(Long filmId) {
-        delete(
-                DELETE_QUERY,
-                filmId
-        );
-    }
-
-    public void addManyGenresToFilm(Long filmId, Collection<Long> genreIds) {
-        for (Long genreId : genreIds) {
-            addGenreToFilm(filmId, genreId);
-        }
-    }
 }
