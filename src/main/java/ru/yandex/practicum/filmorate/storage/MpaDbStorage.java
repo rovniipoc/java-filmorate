@@ -27,26 +27,4 @@ public class MpaDbStorage extends BaseRepository<Mpa> {
     public Mpa getMpa(Long id) {
         return findOne(FIND_BY_ID_QUERY, id);
     }
-
-    public void addMpa(Mpa mpa) {
-        insert(
-                INSERT_QUERY,
-                mpa.getId(),
-                mpa.getName()
-        );
-    }
-
-    public void removeMpa(Mpa mpa) {
-        delete(
-                DELETE_QUERY,
-                mpa.getId()
-        );
-    }
-
-    public void removeAll() {
-        delete(
-                DELETE_ALL_QUERY
-        );
-    }
-
 }
