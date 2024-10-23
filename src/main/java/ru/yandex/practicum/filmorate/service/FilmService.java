@@ -45,14 +45,13 @@ public class FilmService {
     }
 
     public Collection<Film> getPopularFilms(Long count) {
-        return filmStorage.findAll().stream()
-                .sorted((f1, f2) -> Long.compare(f2.getLikes().size(), f1.getLikes().size()))
-                .limit(count)
-                .toList();
+        return likeDbStorage.getPopular(count);
     }
 
     public Collection<Film> getAll() {
-        return filmStorage.findAll();
+        final Collection<Film> films = filmStorage.findAll();
+        genreDbStorage.load(films);
+        return films;
     }
 
     public Film getFilmById(Long id) {

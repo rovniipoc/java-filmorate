@@ -35,7 +35,7 @@ public class GenreDbStorage extends BaseRepository<Genre> {
         return findOne(FIND_BY_ID_QUERY, id);
     }
 
-    public void load(List<Film> films) {
+    public void load(Collection<Film> films) {
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
         final Map<Long, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
         final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.genre_id = g.id AND fg.film_id IN (" + inSql + ")";

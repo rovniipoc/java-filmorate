@@ -39,7 +39,7 @@ public class LikeDbStorage extends BaseRepository<Like> {
         updateRate(filmId);
     }
 
-    public List<Film> getPopular(int count) {
+    public List<Film> getPopular(Long count) {
         return jdbc.queryForList(GET_POPULAR_QUERY, Film.class, count);
     }
 
