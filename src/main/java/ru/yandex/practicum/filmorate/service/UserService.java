@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendshipDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
@@ -16,21 +17,24 @@ import java.util.Collection;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FriendshipDbStorage friendshipDbStorage;
 
-    public UserService(@Autowired @Qualifier("UserDbStorage") UserStorage userStorage) {
+    public UserService(@Autowired @Qualifier("UserDbStorage") UserStorage userStorage,
+                       @Autowired FriendshipDbStorage friendshipDbStorage) {
         this.userStorage = userStorage;
+        this.friendshipDbStorage = friendshipDbStorage;
     }
 
     public void makeFriends(Long id1, Long id2) {
         existUserIdValidate(userStorage.get(id1));
         existUserIdValidate(userStorage.get(id2));
-        userStorage.addFriend(id1, id2);
+        friendshipDbStorage.addFriendship(id1, id2);
     }
 
     public User unfriend(Long id1, Long id2) {
         existUserIdValidate(userStorage.get(id1));
         existUserIdValidate(userStorage.get(id2));
-        userStorage.removeFriend(id1, id2);
+        friendshipDbStorage.removeFriendship(id1, id2);
         return getUserById(id1);
     }
 
