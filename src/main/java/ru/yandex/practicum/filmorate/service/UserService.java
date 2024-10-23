@@ -44,7 +44,7 @@ public class UserService {
 
     public Collection<User> getFriends(Long id) {
         existUserIdValidate(userStorage.get(id));
-        return getUsersByIds(userStorage.get(id).getFriends());
+        return userStorage.getUserFriends(id);
     }
 
     private Collection<User> getUsersByIds(Collection<Long> ids) {

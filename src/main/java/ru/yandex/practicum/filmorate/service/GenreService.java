@@ -28,7 +28,4 @@ public class GenreService {
         return genreDbStorage.getAll();
     }
 
-    public void deleteAll() {
-        genreDbStorage.removeAll();
-    }
 }

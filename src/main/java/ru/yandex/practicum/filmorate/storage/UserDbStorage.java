@@ -75,53 +75,34 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
 
     @Override
     public User get(Long id) {
-        User user = findOne(FIND_BY_ID_QUERY, id);
-        if (user != null) {
-            user.getFriends().addAll(friendshipDbStorage.findAllFriendsIdByUser(user.getId())
-                    .stream()
-                    .map(Friendship::getUserFriendId)
-                    .toList()
-            );
-        }
-        return user;
-    }
-
-    @Override
-    public void addFriend(Long userId, Long friendId) {
-        friendshipDbStorage.addFriendship(userId, friendId);
-    }
-
-    @Override
-    public void removeFriend(Long userId, Long friendId) {
-        friendshipDbStorage.removeFriendship(userId, friendId);
+        return findOne(FIND_BY_ID_QUERY, id);
     }
 
     @Override
     public Collection<User> getUserFriends(Long id) {
-        Collection<User> users = findMany(USER_FRIENDSHIP_QUERY, id);
-        return loadFriends(users);
+        return findMany(USER_FRIENDSHIP_QUERY, id);
     }
 
     public Collection<User> getCommonFriends(Long id1, Long id2) {
-        Collection<User> users = findMany(
+        return findMany(
                 USER_COMMON_FRIENDSHIP_QUERY,
                 id1,
                 id2);
-        return loadFriends(users);
     }
 
-    private Collection<User> loadFriends(Collection<User> users) {
-        if (!users.isEmpty()) {
-            Collection<Friendship> friendshipCollection = friendshipDbStorage.getAll();
-            for (User user : users) {
-                user.getFriends().addAll(friendshipCollection
-                        .stream()
-                        .filter(friendship -> friendship.getUserId().equals(user.getId()))
-                        .map(Friendship::getUserFriendId)
-                        .toList()
-                );
-            }
-        }
-        return users;
-    }
+    //TODO удалить неиспользуемый метод (метод загрузки друзей в User)
+//    private Collection<User> loadFriends(Collection<User> users) {
+//        if (!users.isEmpty()) {
+//            Collection<Friendship> friendshipCollection = friendshipDbStorage.getAll();
+//            for (User user : users) {
+//                user.getFriends().addAll(friendshipCollection
+//                        .stream()
+//                        .filter(friendship -> friendship.getUserId().equals(user.getId()))
+//                        .map(Friendship::getUserFriendId)
+//                        .toList()
+//                );
+//            }
+//        }
+//        return users;
+//    }
 }

@@ -21,7 +21,6 @@ import java.util.Set;
 @Repository("FilmDbStorage")
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
-
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String INSERT_QUERY = "INSERT INTO films (name, description, releaseDate, duration, rating_id) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM films WHERE id = ?";
