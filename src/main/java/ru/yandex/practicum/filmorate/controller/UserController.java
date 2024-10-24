@@ -82,11 +82,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User makeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public void makeFriend(@PathVariable Long id, @PathVariable Long friendId) {
         log.info("Пришел запрос Put /users/{}/friends/{}", id, friendId);
-        User response = userService.makeFriends(id, friendId);
-        log.info("Отправлен ответ Put /users/{}/friends/{} с телом: {}", id, friendId, response);
-        return response;
+        userService.makeFriends(id, friendId);
+        log.info("Выполнен запрос Put /users/{}/friends/{}", id, friendId);
     }
 
 }

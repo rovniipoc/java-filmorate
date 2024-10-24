@@ -50,19 +50,24 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public Film delete(@Valid @RequestBody Film film) {
+    public void delete(@Valid @RequestBody Film film) {
         log.info("Пришел запрос Delete /films с телом {}", film);
-        Film response = filmService.delete(film);
-        log.info("Отправлен ответ Delete /films с телом {}", response);
-        return response;
+        filmService.delete(film);
+        log.info("Выполнен запрос Delete /films");
+    }
+
+    @DeleteMapping("/all")
+    public void deleteAll() {
+        log.info("Пришел запрос Delete /films/all");
+        filmService.deleteAll();
+        log.info("Выполнен запрос Delete /films/all");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film unlike(@PathVariable Long id, @PathVariable Long userId) {
+    public void unlike(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Пришел запрос Delete /films/{}/like/{}", id, userId);
-        Film response = filmService.unlike(id, userId);
-        log.info("Отправлен ответ Delete /films/{}/like/{} с телом: {}", id, userId, response);
-        return response;
+        filmService.unlike(id, userId);
+        log.info("Выполнен запрос Delete /films/{}/like/{}", id, userId);
     }
 
     @PutMapping
@@ -74,11 +79,10 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film like(@PathVariable Long id, @PathVariable Long userId) {
+    public void like(@PathVariable Long id, @PathVariable Long userId) {
         log.info("Пришел запрос Put /films/{}/like/{}", id, userId);
-        Film response = filmService.like(id, userId);
-        log.info("Отправлен ответ Put /films/{}/like/{} с телом: {}", id, userId, response);
-        return response;
+        filmService.like(id, userId);
+        log.info("Выполнен запрос Put /films/{}/like/{}", id, userId);
     }
 
 

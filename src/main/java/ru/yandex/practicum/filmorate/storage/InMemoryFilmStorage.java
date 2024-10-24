@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
@@ -29,13 +29,17 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film remove(Film film) {
+    public void remove(Film film) {
         if (!films.containsKey(film.getId())) {
             log.warn("Ошибка при удалении film с телом {}: указанный id не найден", film);
             throw new NotFoundException("Фильм с id = " + film.getId() + " не найден");
         }
         films.remove(film.getId());
-        return film;
+    }
+
+    @Override
+    public void removeAll() {
+        films.clear();
     }
 
     @Override
@@ -56,6 +60,16 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         return films.get(id);
     }
+
+//    @Override
+//    public void addLike(Long filmId, Long userId) {
+//        films.get(filmId).getLikes().add(userId);
+//    }
+//
+//    @Override
+//    public void removeLike(Long filmId, Long userId) {
+//        films.get(filmId).getLikes().remove(userId);
+//    }
 
     private long getNextId() {
         log.trace("Счетчик id фильмов увеличен");
