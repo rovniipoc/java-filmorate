@@ -1,4 +1,4 @@
-# java-filmorate
+# Java-filmorate
 Filmorate is Yandex educational project
 
 ## Database scheme
