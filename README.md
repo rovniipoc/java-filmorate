@@ -101,8 +101,3 @@ WHERE uf.user_id = [id] AND status = 2
 > "0" - not a friend;
 > "1" - unconfirmed friend;
 > "2" - confirmed friend.
-
-Get common friends
-```sql
-...
-```
